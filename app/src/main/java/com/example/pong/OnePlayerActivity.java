@@ -8,6 +8,9 @@ public class OnePlayerActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_one_player);
+
+        setContentView(new GameView(this, 0));
+
     }
+
 }

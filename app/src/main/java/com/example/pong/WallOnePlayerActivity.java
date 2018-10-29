@@ -8,6 +8,7 @@ public class WallOnePlayerActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wall_one_player);
+        setContentView(new GameView(this, 2));
+        //setContentView(R.layout.activity_wall_one_player);
     }
 }

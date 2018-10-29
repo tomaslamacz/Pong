@@ -8,6 +8,7 @@ public class TwoPlayersActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_two_players);
+        setContentView(new GameView(this, 1));
+        //setContentView(R.layout.activity_two_players);
     }
 }
