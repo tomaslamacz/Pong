@@ -18,7 +18,7 @@ public class Ball {
 
     public Ball(Point screenSize){
         paint = new Paint();
-        paint.setColor(Color.GREEN);
+        paint.setColor(Color.WHITE);
 
         width = screenSize.x / 30;
         height = width;
@@ -43,14 +43,15 @@ public class Ball {
     }
 
     public void update(){
-        posX += 25;
+        //posX += 25;
         rect.left = posX;
         rect.right = posX + width;
         Log.d("update ball",posX+" is now pos x");
     }
 
     public void draw(Canvas canvas) {
-
         canvas.drawRect(this.getRect(), this.getPaint());
     }
+
+
 }

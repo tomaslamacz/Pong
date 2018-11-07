@@ -10,11 +10,9 @@ public class MainThread extends Thread {
     public static Canvas canvas;
 
     public MainThread(SurfaceHolder surfaceHolder, GameView gameView) {
-
         super();
         this.surfaceHolder = surfaceHolder;
         this.gameView = gameView;
-
     }
 
     public void setRunning(boolean isRunning) {
