@@ -29,7 +29,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:background="#fff"
-                android:fontFamily="@font/press_start_2p"
+
                 android:onClick="onePlayerOnClick"
                 android:text="One player"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +43,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:background="#fff"
-                android:fontFamily="@font/press_start_2p"
+
                 android:onClick="twoPlayersOnClick"
                 android:text="Two players"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +59,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:background="#fff"
-                android:fontFamily="@font/press_start_2p"
+
                 android:onClick="WallOnePlayerOnClick"
                 android:text="Wall mode"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -72,7 +72,7 @@
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:fontFamily="@font/press_start_2p"
+
                 android:text="High score: 0"
                 android:textAlignment="center" />
         </LinearLayout>
@@ -84,11 +84,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:fontFamily="@font/press_start_2p"
         android:text="PONG"
         android:textColor="#fff"
         android:textSize="36sp"
         android:textStyle="bold"
+        android:typeface="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
         app:layout_constraintStart_toStartOf="parent"

@@ -92,7 +92,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
                 yUp = event.getY();
 
-                float distanceY = yDown - yUp;
+                /*float distanceY = yDown - yUp;
 
 
                 if(distanceY > 0){
@@ -100,8 +100,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
                 } else if(distanceY < 0){
                     paddleL.moveDown();
-                }
-                Log.d("move ","" + distanceY);
+                }*/
+                paddleL.move((int) yUp);
+                //Log.d("move ","" + distanceY);
                 Log.d("move ",yDown+"," + yUp);
                 break;
             }

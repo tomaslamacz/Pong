@@ -86,4 +86,10 @@ public class Paddle {
 
         Log.d("pos yy ",""+posY);
     }
+
+    public void move(int fingerPosY){
+        if(fingerPosY > height/2 && fingerPosY < screenSize.y - height/2)
+            posY = fingerPosY - height/2;
+
+    }
 }
