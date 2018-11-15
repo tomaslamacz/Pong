@@ -49,4 +49,6 @@ public class MainActivity extends Activity {
         Intent wallOnePlayerActivity = new Intent(getBaseContext(), com.example.pong.WallOnePlayerActivity.class);
         startActivity(wallOnePlayerActivity);
     }
+
+
 }

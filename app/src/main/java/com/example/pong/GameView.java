@@ -1,7 +1,9 @@
 package com.example.pong;
 
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
@@ -9,15 +11,19 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.content.res.Resources;
+import android.widget.Toast;
+
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
-    boolean gameStarted = false;
+    private boolean gameStarted = false;
     private int gameMode = 0;//0==one player, 1==two players, 2== wall mode
     private MainThread thread;
     private Ball ball;
     private Paddle paddleL;
     private Paddle paddleR;
     private Wall wall;
+
+    private SparseArray<PointF> activePointers = new SparseArray<PointF>();
 
     private Point screenSize = new Point(Resources.getSystem().getDisplayMetrics().widthPixels,
                                         Resources.getSystem().getDisplayMetrics().heightPixels);
@@ -36,7 +42,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-
         ball = new Ball(screenSize);
         paddleL = new Paddle(screenSize, false);
 
@@ -90,6 +95,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         paddleL.update();
+
+        if(paddleR != null)
+            paddleR.update();
     }
 
     @Override
@@ -108,20 +116,69 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        int pointerIndex = event.getActionIndex();// get pointer index from the event object
+        int pointerId = event.getPointerId(pointerIndex);// get pointer ID
+        int maskedAction = event.getActionMasked();// get masked (not specific to a pointer) action
+        switch (maskedAction) {
+            case MotionEvent.ACTION_POINTER_DOWN: {
+                // We have a new pointer. Lets add it to the list of pointers
 
-        switch (event.getAction()){
-            case MotionEvent.ACTION_DOWN:{
-                if(!gameStarted)
-                    gameStarted=true;
+                PointF f = new PointF();
+                f.x = event.getX(pointerIndex);
+                f.y = event.getY(pointerIndex);
+                activePointers.put(pointerId, f);
+                break;
+            }
+            case MotionEvent.ACTION_DOWN: {
+                if (!gameStarted)
+                    gameStarted = true;
 
                 return true;
             }
-            case MotionEvent.ACTION_MOVE:{
-                paddleL.move((int) event.getY());
+            case MotionEvent.ACTION_MOVE: {
+                if(gameMode == 1){
+                    for (int size = event.getPointerCount(), i = 0; i < size; i++) {
+                        PointF point = activePointers.get(event.getPointerId(i));
+                        if (point != null) {//multi touch move
+                            point.x = event.getX(i);
+                            point.y = event.getY(i);
 
+                            if (point.x < screenSize.x / 2)
+                                paddleL.move((int) point.y);
+                            else {
+                                paddleR.move((int) point.y);
+                            }
+                        } else{//single touch move
+                            if (event.getX() < screenSize.x / 2)
+                                paddleL.move((int) event.getY());
+                            else {
+                                paddleR.move((int) event.getY());
+                            }
+                        }
+                    }
+                } else{//gamemode je 0 nebo 2
+                    paddleL.move((int) event.getY());
+                }
+                break;
+            }
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_CANCEL: {
+                activePointers.remove(pointerId);
                 break;
             }
         }
+
         return super.onTouchEvent(event);
     }
+
+    public void resume(){
+        Log.d("pr","resume");
+    }
+    public void pause(){
+        Log.d("pr","pause");
+
+    }
+
+
 }
