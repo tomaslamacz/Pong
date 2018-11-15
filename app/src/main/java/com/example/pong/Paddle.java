@@ -44,6 +44,11 @@ public class Paddle {
         rect.right = posX + width;
         rect.bottom = posY + height;
 
+        Log.d("wall p left",""+rect.left);
+        Log.d("wall p top",""+rect.top);
+        Log.d("wall p right",""+rect.right);
+        Log.d("wall p bottom",""+rect.bottom);
+
     }
 
     public Rect getRect() {

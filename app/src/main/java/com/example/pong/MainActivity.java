@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         //fonty funguji pouze po pridani programove:
-        Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/press_start_2p.ttf"); //you can use your activity name instead of getActivity().
+        Typeface tf = Typeface.createFromAsset(getAssets(),"fonts/press_start_2p.ttf");
         tvHighscore = (TextView) findViewById(R.id.textView4);
         tvPong = (TextView) findViewById(R.id.textView5);
         btnOneP = (Button) findViewById(R.id.btn_one_player);

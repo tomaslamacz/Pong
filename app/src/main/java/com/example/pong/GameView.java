@@ -11,18 +11,17 @@ import android.graphics.Color;
 import android.content.res.Resources;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
-
-    private int gameMode = 0;
+    boolean gameStarted = false;
+    private int gameMode = 0;//0==one player, 1==two players, 2== wall mode
     private MainThread thread;
     private Ball ball;
     private Paddle paddleL;
     private Paddle paddleR;
+    private Wall wall;
 
     private Point screenSize = new Point(Resources.getSystem().getDisplayMetrics().widthPixels,
                                         Resources.getSystem().getDisplayMetrics().heightPixels);
 
-    private float yDown = 0;
-    private float yUp = 0;
 
     public GameView(Context context, int gameMode) {
         super(context);
@@ -40,6 +39,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         ball = new Ball(screenSize);
         paddleL = new Paddle(screenSize, false);
+
+        if(gameMode == 0 || gameMode == 1){
+            paddleR = new Paddle(screenSize, true);
+        } else if(gameMode == 2){
+            wall = new Wall(screenSize);
+        }
 
         thread.setRunning(true);
         thread.start();
@@ -65,7 +70,25 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        ball.update();
+
+        if(ball.getPosY() < 20){//horni hrana
+            if(ball.getDirection() == Ball.directions.UP_RIGHT){
+                ball.setDirection(Ball.directions.DOWN_RIGHT);
+            } else if(ball.getDirection() == Ball.directions.UP_LEFT){
+                ball.setDirection(Ball.directions.DOWN_LEFT);
+            }
+        } else if (ball.getPosY() > screenSize.y - 20){//dolni hrana
+            if(ball.getDirection() == Ball.directions.DOWN_RIGHT){
+                ball.setDirection(Ball.directions.UP_RIGHT);
+            } else if(ball.getDirection() == Ball.directions.DOWN_LEFT){
+                ball.setDirection(Ball.directions.UP_LEFT);
+            }
+        }
+
+        if (gameStarted){
+            ball.update();
+        }
+
         paddleL.update();
     }
 
@@ -76,6 +99,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawColor(Color.BLACK);
             ball.draw(canvas);
             paddleL.draw(canvas);
+            if(paddleR != null)
+                paddleR.draw(canvas);
+            if(wall != null)
+                wall.draw(canvas);
         }
     }
 
@@ -84,26 +111,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:{
+                if(!gameStarted)
+                    gameStarted=true;
 
-                yDown = event.getY();
                 return true;
             }
-            case MotionEvent.ACTION_MOVE/*.ACTION_UP*/:{
+            case MotionEvent.ACTION_MOVE:{
+                paddleL.move((int) event.getY());
 
-                yUp = event.getY();
-
-                /*float distanceY = yDown - yUp;
-
-
-                if(distanceY > 0){
-                    paddleL.moveUp();
-
-                } else if(distanceY < 0){
-                    paddleL.moveDown();
-                }*/
-                paddleL.move((int) yUp);
-                //Log.d("move ","" + distanceY);
-                Log.d("move ",yDown+"," + yUp);
                 break;
             }
         }

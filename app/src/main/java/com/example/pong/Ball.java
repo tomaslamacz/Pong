@@ -16,7 +16,16 @@ public class Ball {
     private Rect rect;
     private Paint paint;
 
+    private int speedX = 12;
+    private int speedY = 8;
+
+    enum directions{
+      UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT;
+    }
+    private directions direction = directions.DOWN_LEFT;
+
     public Ball(Point screenSize){
+
         paint = new Paint();
         paint.setColor(Color.WHITE);
 
@@ -43,9 +52,28 @@ public class Ball {
     }
 
     public void update(){
-        //posX += 25;
+
+
+        if (direction == directions.UP_RIGHT){
+            posX += speedX;
+            posY -= speedY;
+        } else if (direction == directions.UP_LEFT){
+            posX -= speedX;
+            posY -= speedY;
+        } else if (direction == directions.DOWN_LEFT){
+            posX -= speedX;
+            posY += speedY;
+        } else if (direction == directions.DOWN_RIGHT){
+            posX += speedX;
+            posY += speedY;
+        }
+
+
         rect.left = posX;
         rect.right = posX + width;
+        rect.top = posY;
+        rect.bottom = posY + height;
+
         Log.d("update ball",posX+" is now pos x");
     }
 
@@ -53,5 +81,19 @@ public class Ball {
         canvas.drawRect(this.getRect(), this.getPaint());
     }
 
+    public int getPosY() {
+        return posY;
+    }
 
+    public int getPosX() {
+        return posX;
+    }
+
+    public directions getDirection() {
+        return direction;
+    }
+
+    public void setDirection(directions direction) {
+        this.direction = direction;
+    }
 }
