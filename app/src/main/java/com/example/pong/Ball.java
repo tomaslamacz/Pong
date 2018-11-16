@@ -17,18 +17,18 @@ public class Ball {
     private Paint paint;
     private Point screenSize;
 
-    private int speedX = 12;
-    private int speedY = 6;
-    private int diagSpeedY = 12;
+    private int speedX = 120;
+    private int speedY = 60;
+    private int diagSpeedY = 120;
 
 
 
     enum directions{
         UP_RIGHT, DOWN_RIGHT, DOWN_LEFT, UP_LEFT,
-        RIGHT, LEFT,
+        //RIGHT, LEFT,
         UP_RIGHT_DIAG, DOWN_RIGHT_DIAG, DOWN_LEFT_DIAG, UP_LEFT_DIAG;//vice nahoru nebo dolu
     }
-    private directions direction = directions.LEFT;
+    private directions direction = directions.UP_LEFT;
 
     public Ball(Point screenSize){
         this.screenSize=screenSize;
@@ -40,7 +40,7 @@ public class Ball {
         height = width;
 
         posX = screenSize.x / 2 - width / 2;
-        posY = screenSize.y / 2 + height;
+        posY = screenSize.y / 2 + height*4;
 
         rect = new Rect();
         rect.left = posX;
@@ -52,7 +52,7 @@ public class Ball {
 
     public void reset() {
         posX = screenSize.x / 2 - width / 2;
-        posY = screenSize.y / 2 + height;
+        posY = screenSize.y / 2 + height*4;
 
         rect = new Rect();
         rect.left = posX;
@@ -60,7 +60,11 @@ public class Ball {
         rect.right = posX + width;
         rect.bottom = posY + height;
 
-        direction = directions.LEFT;
+        direction = directions.UP_LEFT;
+
+        speedX = 120;
+        speedY = 60;
+        diagSpeedY = 120;
     }
 
     public Rect getRect() {
@@ -75,51 +79,36 @@ public class Ball {
 
 
         if (direction == directions.UP_RIGHT){
-            posX += speedX;
-            posY -= speedY;
+            posX += speedX/10;
+            posY -= speedY/10;
         } else if (direction == directions.UP_LEFT){
-            posX -= speedX;
-            posY -= speedY;
+            posX -= speedX/10;
+            posY -= speedY/10;
         } else if (direction == directions.DOWN_LEFT){
-            posX -= speedX;
-            posY += speedY;
+            posX -= speedX/10;
+            posY += speedY/10;
         } else if (direction == directions.DOWN_RIGHT){
-            posX += speedX;
-            posY += speedY;
-        } else if (direction == directions.LEFT){
+            posX += speedX/10;
+            posY += speedY/10;
+        }/* else if (direction == directions.LEFT){
             posX -= speedX;
             //posY += speedY;
         } else if (direction == directions.RIGHT){
             posX += speedX;
             //posY += speedY;
-        } else if (direction == directions.UP_RIGHT_DIAG){
-            posX += speedX;
-            posY -= diagSpeedY;
+        }*/ else if (direction == directions.UP_RIGHT_DIAG){
+            posX += speedX/10;
+            posY -= diagSpeedY/10;
         } else if (direction == directions.UP_LEFT_DIAG){
-            posX -= speedX;
-            posY -= diagSpeedY;
+            posX -= speedX/10;
+            posY -= diagSpeedY/10;
         } else if (direction == directions.DOWN_LEFT_DIAG){
-            posX -= speedX;
-            posY += diagSpeedY;
+            posX -= speedX/10;
+            posY += diagSpeedY/10;
         } else if (direction == directions.DOWN_RIGHT_DIAG){
-            posX += speedX;
-            posY += diagSpeedY;
+            posX += speedX/10;
+            posY += diagSpeedY/10;
         }
-
-        /*if (direction == directions.UP_RIGHT){
-            posX += speedX;
-            posY -= speedY;
-        } else if (direction == directions.UP_LEFT){
-            posX -= speedX;
-            posY -= speedY;
-        } else if (direction == directions.DOWN_LEFT){
-            posX -= speedX;
-            posY += speedY;
-        } else if (direction == directions.DOWN_RIGHT){
-            posX += speedX;
-            posY += speedY;
-        }*/
-
 
         rect.left = posX;
         rect.right = posX + width;
@@ -157,27 +146,15 @@ public class Ball {
         return height;
     }
 
-    public void setSpeedX(int speedX) {
-        this.speedX = speedX;
-    }
+    public void adjustSpeed(){
+        if (speedX < 180){
+            speedX *= 1.05;
+            speedY *= 1.03;
+            diagSpeedY *= 1.03;
+        }
 
-    public void setSpeedY(int speedY) {
-        this.speedY = speedY;
-    }
 
-    public void setDiagSpeedY(int diagSpeedY) {
-        this.diagSpeedY = diagSpeedY;
-    }
 
-    public int getSpeedX() {
-        return speedX;
-    }
-
-    public int getSpeedY() {
-        return speedY;
-    }
-
-    public int getDiagSpeedY() {
-        return diagSpeedY;
+        Log.i("speedx",""+speedX);
     }
 }

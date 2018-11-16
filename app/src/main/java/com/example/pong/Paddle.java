@@ -27,7 +27,7 @@ public class Paddle {
         paint.setColor(Color.WHITE);
 
         width = screenSize.x / 100;
-        height = screenSize.y / 5;
+        height = screenSize.y / 6;
 
         this.screenSize = screenSize;
 

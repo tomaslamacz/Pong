@@ -94,6 +94,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             } else if(ball.getDirection() == Ball.directions.UP_LEFT_DIAG){
                 ball.setDirection(Ball.directions.DOWN_LEFT_DIAG);
             }
+
+            ball.adjustSpeed();
         } else if (ball.getPosY() + ball.getHeight() > screenSize.y - 1){//dolni hrana
             if(ball.getDirection() == Ball.directions.DOWN_RIGHT){
                 ball.setDirection(Ball.directions.UP_RIGHT);
@@ -104,6 +106,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             } else if(ball.getDirection() == Ball.directions.DOWN_LEFT_DIAG){
                 ball.setDirection(Ball.directions.UP_LEFT_DIAG);
             }
+
+            ball.adjustSpeed();
         }
 
         //odraz od levého pádla:
@@ -112,21 +116,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             if(ball.getPosY() + ball.getHeight() > paddleL.getPosY() && ball.getPosY() < paddleL.getPosY() + paddleL.getHeight()){
                 //vypocteme, na kterou petinu padla dopadl stred micku
-                int petinaPadla = paddleL.getHeight() / 5;//velikost petiny padla
-                int petinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleL.getPosY()) / petinaPadla;
+                int ctvrtinaPadla = paddleL.getHeight() / 4;//velikost petiny padla
+                int ctvrtinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleL.getPosY()) / ctvrtinaPadla;
 
-                if (petinaDopadu == 0){
+                if (ctvrtinaDopadu == 0){
                     ball.setDirection(Ball.directions.UP_RIGHT_DIAG);
-                } else if (petinaDopadu == 1){
+                } else if (ctvrtinaDopadu == 1){
                     ball.setDirection(Ball.directions.UP_RIGHT);
-                } else if (petinaDopadu == 2){
-                    ball.setDirection(Ball.directions.RIGHT);
-                } else if (petinaDopadu == 3){
+                } else if (ctvrtinaDopadu == 2){
                     ball.setDirection(Ball.directions.DOWN_RIGHT);
                 } else/* if (petinaDopadu == 4)*/{
                     ball.setDirection(Ball.directions.DOWN_RIGHT_DIAG);
                 }
-                Log.i("petina",""+petinaDopadu);
+                Log.i("petina",""+ctvrtinaDopadu);
 
 
 
@@ -142,21 +144,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             if(ball.getPosY() + ball.getHeight() > paddleR.getPosY() && ball.getPosY() < paddleR.getPosY() + paddleR.getHeight()){
                 //vypocteme, na kterou petinu padla dopadl stred micku
-                int petinaPadla = paddleR.getHeight() / 5;//velikost petiny padla
-                int petinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleR.getPosY()) / petinaPadla;
+                int ctvrtinaPadla = paddleR.getHeight() / 4;//velikost petiny padla
+                int ctvrtinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleR.getPosY()) / ctvrtinaPadla;
 
-                if (petinaDopadu == 0){
+                if (ctvrtinaDopadu == 0){
                     ball.setDirection(Ball.directions.UP_LEFT_DIAG);
-                } else if (petinaDopadu == 1){
+                } else if (ctvrtinaDopadu == 1){
                     ball.setDirection(Ball.directions.UP_LEFT);
-                } else if (petinaDopadu == 2){
-                    ball.setDirection(Ball.directions.LEFT);
-                } else if (petinaDopadu == 3){
+                } else if (ctvrtinaDopadu == 2){
                     ball.setDirection(Ball.directions.DOWN_LEFT);
                 } else/* if (petinaDopadu == 4)*/{
                     ball.setDirection(Ball.directions.DOWN_LEFT_DIAG);
                 }
-                Log.i("petinar",""+petinaDopadu);
+                Log.i("petinar",""+ctvrtinaDopadu);
 
 
 
@@ -173,8 +173,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     ball.setDirection(Ball.directions.UP_LEFT_DIAG);
                 } else if(ball.getDirection() == Ball.directions.UP_RIGHT){
                     ball.setDirection(Ball.directions.UP_LEFT);
-                } else if(ball.getDirection() == Ball.directions.RIGHT){
-                    ball.setDirection(Ball.directions.LEFT);
                 } else if(ball.getDirection() == Ball.directions.DOWN_RIGHT){
                     ball.setDirection(Ball.directions.DOWN_LEFT);
                 } else if(ball.getDirection() == Ball.directions.DOWN_RIGHT_DIAG){
