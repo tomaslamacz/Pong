@@ -79,20 +79,114 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
+        if(ball.getPosX()+ball.getWidth() < 0 || ball.getPosX() > screenSize.x){
+            //TODO restart hry
+            //ball.set...
+        }
 
-        if(ball.getPosY() < 20){//horni hrana
+        if(ball.getPosY() < 1){//horni hrana
             if(ball.getDirection() == Ball.directions.UP_RIGHT){
                 ball.setDirection(Ball.directions.DOWN_RIGHT);
             } else if(ball.getDirection() == Ball.directions.UP_LEFT){
                 ball.setDirection(Ball.directions.DOWN_LEFT);
+            } else if(ball.getDirection() == Ball.directions.UP_RIGHT_DIAG){
+                ball.setDirection(Ball.directions.DOWN_RIGHT_DIAG);
+            } else if(ball.getDirection() == Ball.directions.UP_LEFT_DIAG){
+                ball.setDirection(Ball.directions.DOWN_LEFT_DIAG);
             }
-        } else if (ball.getPosY() > screenSize.y - 20){//dolni hrana
+        } else if (ball.getPosY() + ball.getHeight() > screenSize.y - 1){//dolni hrana
             if(ball.getDirection() == Ball.directions.DOWN_RIGHT){
                 ball.setDirection(Ball.directions.UP_RIGHT);
             } else if(ball.getDirection() == Ball.directions.DOWN_LEFT){
                 ball.setDirection(Ball.directions.UP_LEFT);
+            } else if(ball.getDirection() == Ball.directions.DOWN_RIGHT_DIAG){
+                ball.setDirection(Ball.directions.UP_RIGHT_DIAG);
+            } else if(ball.getDirection() == Ball.directions.DOWN_LEFT_DIAG){
+                ball.setDirection(Ball.directions.UP_LEFT_DIAG);
             }
         }
+
+        //odraz od levého pádla:
+        if(ball.getPosX() >= screenSize.x * 1/10 - paddleL.getWidth() && ball.getPosX() <= screenSize.x * 1/10){
+
+
+            if(ball.getPosY() + ball.getHeight() > paddleL.getPosY() && ball.getPosY() < paddleL.getPosY() + paddleL.getHeight()){
+                //vypocteme, na kterou petinu padla dopadl stred micku
+                int petinaPadla = paddleL.getHeight() / 5;//velikost petiny padla
+                int petinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleL.getPosY()) / petinaPadla;
+
+                if (petinaDopadu == 0){
+                    ball.setDirection(Ball.directions.UP_RIGHT_DIAG);
+                } else if (petinaDopadu == 1){
+                    ball.setDirection(Ball.directions.UP_RIGHT);
+                } else if (petinaDopadu == 2){
+                    ball.setDirection(Ball.directions.RIGHT);
+                } else if (petinaDopadu == 3){
+                    ball.setDirection(Ball.directions.DOWN_RIGHT);
+                } else/* if (petinaDopadu == 4)*/{
+                    ball.setDirection(Ball.directions.DOWN_RIGHT_DIAG);
+                }
+                Log.i("petina",""+petinaDopadu);
+
+
+
+            } else{//netrefil
+                scoreTable.setRightPlayerScore(scoreTable.getRightPlayerScore()+1);
+
+                reset();
+            }
+        }
+
+        //odraz od pravého pádla:
+        if(paddleR != null && ball.getPosX() + ball.getWidth() >= screenSize.x * 9/10 && ball.getPosX() + ball.getWidth() <= screenSize.x * 9/10 + paddleR.getWidth()){
+
+            if(ball.getPosY() + ball.getHeight() > paddleR.getPosY() && ball.getPosY() < paddleR.getPosY() + paddleR.getHeight()){
+                //vypocteme, na kterou petinu padla dopadl stred micku
+                int petinaPadla = paddleR.getHeight() / 5;//velikost petiny padla
+                int petinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleR.getPosY()) / petinaPadla;
+
+                if (petinaDopadu == 0){
+                    ball.setDirection(Ball.directions.UP_LEFT_DIAG);
+                } else if (petinaDopadu == 1){
+                    ball.setDirection(Ball.directions.UP_LEFT);
+                } else if (petinaDopadu == 2){
+                    ball.setDirection(Ball.directions.LEFT);
+                } else if (petinaDopadu == 3){
+                    ball.setDirection(Ball.directions.DOWN_LEFT);
+                } else/* if (petinaDopadu == 4)*/{
+                    ball.setDirection(Ball.directions.DOWN_LEFT_DIAG);
+                }
+                Log.i("petinar",""+petinaDopadu);
+
+
+
+            } else{//netrefil
+                scoreTable.setLeftPlayerScore(scoreTable.getLeftPlayerScore()+1);
+                reset();
+            }
+        }
+
+        //odraz od zdi:
+        if(wall != null){
+            if(ball.getPosX() + ball.getWidth() >= screenSize.x * 9/10){
+                if(ball.getDirection() == Ball.directions.UP_RIGHT_DIAG){
+                    ball.setDirection(Ball.directions.UP_LEFT_DIAG);
+                } else if(ball.getDirection() == Ball.directions.UP_RIGHT){
+                    ball.setDirection(Ball.directions.UP_LEFT);
+                } else if(ball.getDirection() == Ball.directions.RIGHT){
+                    ball.setDirection(Ball.directions.LEFT);
+                } else if(ball.getDirection() == Ball.directions.DOWN_RIGHT){
+                    ball.setDirection(Ball.directions.DOWN_LEFT);
+                } else if(ball.getDirection() == Ball.directions.DOWN_RIGHT_DIAG){
+                    ball.setDirection(Ball.directions.DOWN_LEFT_DIAG);
+                }
+
+                scoreTable.setLeftPlayerScore(scoreTable.getLeftPlayerScore()+1);
+                //ball.setDirection(Ball.directions.DOWN_LEFT);
+            }
+        }
+
+
 
         if (gameStarted){
             ball.update();
@@ -184,6 +278,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
     public void pause(){
         Log.d("pr","pause");
+
+    }
+
+
+
+    public void reset(){
+        ball.reset();
+        paddleL.reset();
+        if(paddleR != null)
+            paddleR.reset();
 
     }
 

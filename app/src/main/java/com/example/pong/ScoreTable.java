@@ -17,6 +17,7 @@ public class ScoreTable {
     private String text;
     private Paint paint;
 
+
     private int leftPlayerScore;
     private int rightPlayerScore;
     private int gameMode;
@@ -58,8 +59,22 @@ public class ScoreTable {
         this.rightPlayerScore = score;
     }
 
+    public int getLeftPlayerScore() {
+        return leftPlayerScore;
+    }
+
+    public int getRightPlayerScore() {
+        return rightPlayerScore;
+    }
+
     public void draw(Canvas canvas) {
+        if (gameMode == 2){
+            this.text = leftPlayerScore+"";
+        } else {
+            this.text = leftPlayerScore + " : " + rightPlayerScore;
+        }
         canvas.drawText(text, posX, posY, paint);
+        Log.i("score draw",""+leftPlayerScore);
     }
 
 

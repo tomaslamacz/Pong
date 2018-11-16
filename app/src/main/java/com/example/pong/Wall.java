@@ -52,5 +52,7 @@ public class Wall {
         canvas.drawRect(this.getRect(), this.getPaint());
     }
 
-
+    public int getWidth() {
+        return width;
+    }
 }

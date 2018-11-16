@@ -32,9 +32,9 @@ public class Paddle {
         this.screenSize = screenSize;
 
         if(side)
-            posX = screenSize.x * 9/10 - width / 2;//vpravo
+            posX = screenSize.x * 9/10/* - width / 2*/;//vpravo
         else
-            posX = screenSize.x * 1/10 - width / 2;//vlevo
+            posX = screenSize.x * 1/10 - width /*/ 2*/;//vlevo
 
         posY = screenSize.y / 2 - height / 2;
 
@@ -96,5 +96,17 @@ public class Paddle {
         if(fingerPosY > height/2 && fingerPosY < screenSize.y - height/2)
             posY = fingerPosY - height/2;
 
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void reset() {
+        posY = screenSize.y / 2 - height / 2;
     }
 }
