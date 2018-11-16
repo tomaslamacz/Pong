@@ -27,7 +27,7 @@ public class Ball {
     public Ball(Point screenSize){
 
         paint = new Paint();
-        paint.setColor(Color.WHITE);
+        paint.setColor(Color.YELLOW);
 
         width = screenSize.x / 30;
         height = width;

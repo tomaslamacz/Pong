@@ -1,5 +1,6 @@
 package com.example.pong;
 
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.util.Log;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
+    private Context context;
     private boolean gameStarted = false;
     private int gameMode = 0;//0==one player, 1==two players, 2== wall mode
     private MainThread thread;
@@ -22,6 +24,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Paddle paddleL;
     private Paddle paddleR;
     private Wall wall;
+    private ScoreTable scoreTable;
+    private Line line;
 
     private SparseArray<PointF> activePointers = new SparseArray<PointF>();
 
@@ -31,12 +35,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public GameView(Context context, int gameMode) {
         super(context);
-
         this.gameMode = gameMode;
-        Log.d("this game mode is ", this.gameMode+"");
-
+        this.context = context;
         getHolder().addCallback(this);
-
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
     }
@@ -50,6 +51,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         } else if(gameMode == 2){
             wall = new Wall(screenSize);
         }
+
+        scoreTable = new ScoreTable(screenSize,0,0, this.gameMode, this.context);
+        line = new Line(screenSize, this.gameMode);
 
         thread.setRunning(true);
         thread.start();
@@ -105,12 +109,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         if (canvas != null) {
             canvas.drawColor(Color.BLACK);
+            line.draw(canvas);
             ball.draw(canvas);
             paddleL.draw(canvas);
             if(paddleR != null)
                 paddleR.draw(canvas);
             if(wall != null)
                 wall.draw(canvas);
+
+            scoreTable.draw(canvas);
         }
     }
 
