@@ -7,9 +7,11 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 
+
 public class Paddle {
     private int posX;
     private int posY;
+    private int desiredPosY = -999;
 
     private int width;
     private int height;
@@ -18,7 +20,7 @@ public class Paddle {
 
     private Point screenSize;
 
-    private int speed = 30;
+    private int speed = 7;
 
     public Paddle(Point screenSize, boolean side){
 
@@ -63,6 +65,18 @@ public class Paddle {
         rect.top = posY;
         rect.bottom = posY + height;
         Log.d("update paddle",posY+" is now pos y");
+
+
+        if(desiredPosY != -999){
+            int tolerance = (int) (Math.random() * 10);
+            if (desiredPosY < posY + height + tolerance){
+                moveUp();
+            }
+            if (desiredPosY > posY - tolerance){
+                moveDown();
+            }
+        }
+
     }
 
     public void draw(Canvas canvas) {
@@ -78,22 +92,11 @@ public class Paddle {
     }
 
     public void moveUp() {
-        if(posY > speed){
-            posY = posY - speed;
-        } else{
-            posY = 0;
-        }
-
-        Log.d("move ","up");
+        if (posY > 0)
+            posY -= speed;
     }
     public void moveDown() {
-        if(posY < screenSize.y - height - speed){
-            posY = posY+speed;
-        } else {
-            posY = screenSize.y - height - speed;
-        }
-
-        Log.d("pos yy ",""+posY);
+        posY += speed;
     }
 
     public void move(int fingerPosY){
@@ -112,5 +115,17 @@ public class Paddle {
 
     public void reset() {
         posY = screenSize.y / 2 - height / 2;
+    }
+
+    public void setPosY(int posY) {
+        this.posY = posY;
+    }
+
+    public void setDesiredPosY(int desiredPosY) {
+        this.desiredPosY = desiredPosY;
+    }
+
+    public int getDesiredPosY() {
+        return desiredPosY;
     }
 }

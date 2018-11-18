@@ -22,6 +22,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int gameMode = 0;//0==one player, 1==two players, 2== wall mode
     private MainThread thread;
     private Ball ball;
+    private Ball clone;
     private Paddle paddleL;
     private Paddle paddleR;
     private Wall wall;
@@ -46,6 +47,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         ball = new Ball(screenSize);
+        clone = new Ball(screenSize);
         paddleL = new Paddle(screenSize, false);
 
         if(gameMode == 0 || gameMode == 1){
@@ -82,7 +84,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        if(ball.getPosY() < 1){//horni hrana
+        //presunuto do tridy ball:
+        /*if(ball.getPosY() < 1){//horni hrana
             if(ball.getDirection() == Ball.directions.UP_RIGHT){
                 ball.setDirection(Ball.directions.DOWN_RIGHT);
             } else if(ball.getDirection() == Ball.directions.UP_LEFT){
@@ -106,7 +109,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
 
             ball.adjustSpeed();
-        }
+        }*/
 
         //odraz od levého pádla:
         if(ball.getPosX() >= screenSize.x * 1/10 - paddleL.getWidth() && ball.getPosX() <= screenSize.x * 1/10){
@@ -126,6 +129,30 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     ball.setDirection(Ball.directions.DOWN_RIGHT_DIAG);
                 }
                 Log.i("ctvrtina",""+ctvrtinaDopadu);
+
+
+                //umela inteligence: (https://gamedev.stackexchange.com/questions/124037/how-to-make-pong-ai-paddle)
+                if(gameMode == 0){
+                    clone.copy(ball);
+
+                    int distanceX = 0;
+                    do {
+                        distanceX = Math.abs(clone.getPosX() - paddleR.getPosX());
+
+                        clone.update();
+
+                        Log.i("dy",distanceX+"");
+                    } while (distanceX > 100);
+
+                    paddleR.setDesiredPosY(clone.getPosY());
+                    /*if(clone.getPosY() < paddleR.getPosY()){
+                        paddleR.moveUp();
+                    } else {
+                        paddleR.moveDown();
+                    }*/
+
+
+                }
 
             } else{//netrefil
                 scoreTable.setRightPlayerScore(scoreTable.getRightPlayerScore()+1);
@@ -186,6 +213,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         if(paddleR != null)
             paddleR.update();
+
+
+
     }
 
     @Override

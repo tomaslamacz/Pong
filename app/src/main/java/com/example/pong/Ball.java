@@ -29,7 +29,7 @@ public class Ball {
     }
     private directions direction = directions.UP_LEFT;
 
-    public Ball(Point screenSize){
+    public Ball(Point screenSize) {
         this.screenSize=screenSize;
 
         paint = new Paint();
@@ -75,6 +75,32 @@ public class Ball {
     }
 
     public void update(){
+        if(getPosY() < 1){//horni hrana
+            if(getDirection() == Ball.directions.UP_RIGHT){
+                setDirection(Ball.directions.DOWN_RIGHT);
+            } else if(getDirection() == Ball.directions.UP_LEFT){
+                setDirection(Ball.directions.DOWN_LEFT);
+            } else if(getDirection() == Ball.directions.UP_RIGHT_DIAG){
+                setDirection(Ball.directions.DOWN_RIGHT_DIAG);
+            } else if(getDirection() == Ball.directions.UP_LEFT_DIAG){
+                setDirection(Ball.directions.DOWN_LEFT_DIAG);
+            }
+
+            adjustSpeed();
+        } else if (getPosY() + getHeight() > screenSize.y - 1){//dolni hrana
+            if(getDirection() == Ball.directions.DOWN_RIGHT){
+                setDirection(Ball.directions.UP_RIGHT);
+            } else if(getDirection() == Ball.directions.DOWN_LEFT){
+                setDirection(Ball.directions.UP_LEFT);
+            } else if(getDirection() == Ball.directions.DOWN_RIGHT_DIAG){
+                setDirection(Ball.directions.UP_RIGHT_DIAG);
+            } else if(getDirection() == Ball.directions.DOWN_LEFT_DIAG){
+                setDirection(Ball.directions.UP_LEFT_DIAG);
+            }
+
+            adjustSpeed();
+        }
+
 
 
         if (direction == directions.UP_RIGHT){
@@ -147,5 +173,15 @@ public class Ball {
         }
 
         Log.i("speedx",""+speedX);
+    }
+
+    public void copy(Ball anotherBall){
+        posX = anotherBall.posX;
+        posY = anotherBall.posY;
+
+        speedX = anotherBall.speedX;
+        speedY = anotherBall.speedY;
+        diagSpeedY = anotherBall.diagSpeedY;
+        direction = anotherBall.direction;
     }
 }
