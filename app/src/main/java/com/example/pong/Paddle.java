@@ -73,6 +73,10 @@ public class Paddle {
         return posY;
     }
 
+    public int getPosX() {
+        return posX;
+    }
+
     public void moveUp() {
         if(posY > speed){
             posY = posY - speed;

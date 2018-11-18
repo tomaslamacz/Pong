@@ -1,6 +1,6 @@
 package com.example.pong;
 
-import android.graphics.Paint;
+import android.content.Intent;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.util.Log;
@@ -18,6 +18,7 @@ import android.widget.Toast;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Context context;
     private boolean gameStarted = false;
+    private boolean gameEnded = false;
     private int gameMode = 0;//0==one player, 1==two players, 2== wall mode
     private MainThread thread;
     private Ball ball;
@@ -25,6 +26,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Paddle paddleR;
     private Wall wall;
     private ScoreTable scoreTable;
+    private GameEndText geText;
     private Line line;
 
     private SparseArray<PointF> activePointers = new SparseArray<PointF>();
@@ -52,8 +54,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             wall = new Wall(screenSize);
         }
 
-        scoreTable = new ScoreTable(screenSize,0,0, this.gameMode, this.context);
-        line = new Line(screenSize, this.gameMode);
+        scoreTable = new ScoreTable(screenSize,0,0, gameMode, context);
+        geText  = new GameEndText(screenSize,context);
+        line = new Line(screenSize, gameMode);
 
         thread.setRunning(true);
         thread.start();
@@ -79,11 +82,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        if(ball.getPosX()+ball.getWidth() < 0 || ball.getPosX() > screenSize.x){
-            //TODO restart hry
-            //ball.set...
-        }
-
         if(ball.getPosY() < 1){//horni hrana
             if(ball.getDirection() == Ball.directions.UP_RIGHT){
                 ball.setDirection(Ball.directions.DOWN_RIGHT);
@@ -113,10 +111,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //odraz od levého pádla:
         if(ball.getPosX() >= screenSize.x * 1/10 - paddleL.getWidth() && ball.getPosX() <= screenSize.x * 1/10){
 
-
-            if(ball.getPosY() + ball.getHeight() > paddleL.getPosY() && ball.getPosY() < paddleL.getPosY() + paddleL.getHeight()){
-                //vypocteme, na kterou petinu padla dopadl stred micku
-                int ctvrtinaPadla = paddleL.getHeight() / 4;//velikost petiny padla
+            if(ball.getPosY() + ball.getHeight() > paddleL.getPosY() && ball.getPosY() < paddleL.getPosY() + paddleL.getHeight()){//trefil
+                //vypocteme, na kterou ctvrtinu padla dopadl stred micku
+                int ctvrtinaPadla = paddleL.getHeight() / 4;//velikost ctvrtiny padla
                 int ctvrtinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleL.getPosY()) / ctvrtinaPadla;
 
                 if (ctvrtinaDopadu == 0){
@@ -125,16 +122,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     ball.setDirection(Ball.directions.UP_RIGHT);
                 } else if (ctvrtinaDopadu == 2){
                     ball.setDirection(Ball.directions.DOWN_RIGHT);
-                } else/* if (petinaDopadu == 4)*/{
+                } else {
                     ball.setDirection(Ball.directions.DOWN_RIGHT_DIAG);
                 }
-                Log.i("petina",""+ctvrtinaDopadu);
-
-
+                Log.i("ctvrtina",""+ctvrtinaDopadu);
 
             } else{//netrefil
                 scoreTable.setRightPlayerScore(scoreTable.getRightPlayerScore()+1);
-
+                gameEnded = true;
                 reset();
             }
         }
@@ -142,9 +137,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //odraz od pravého pádla:
         if(paddleR != null && ball.getPosX() + ball.getWidth() >= screenSize.x * 9/10 && ball.getPosX() + ball.getWidth() <= screenSize.x * 9/10 + paddleR.getWidth()){
 
-            if(ball.getPosY() + ball.getHeight() > paddleR.getPosY() && ball.getPosY() < paddleR.getPosY() + paddleR.getHeight()){
-                //vypocteme, na kterou petinu padla dopadl stred micku
-                int ctvrtinaPadla = paddleR.getHeight() / 4;//velikost petiny padla
+            if(ball.getPosY() + ball.getHeight() > paddleR.getPosY() && ball.getPosY() < paddleR.getPosY() + paddleR.getHeight()){//trefil
+                //vypocteme, na kterou ctvrtinu padla dopadl stred micku
+                int ctvrtinaPadla = paddleR.getHeight() / 4;//velikost cvtvrtiny padla
                 int ctvrtinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleR.getPosY()) / ctvrtinaPadla;
 
                 if (ctvrtinaDopadu == 0){
@@ -153,15 +148,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     ball.setDirection(Ball.directions.UP_LEFT);
                 } else if (ctvrtinaDopadu == 2){
                     ball.setDirection(Ball.directions.DOWN_LEFT);
-                } else/* if (petinaDopadu == 4)*/{
+                } else {
                     ball.setDirection(Ball.directions.DOWN_LEFT_DIAG);
                 }
-                Log.i("petinar",""+ctvrtinaDopadu);
-
-
 
             } else{//netrefil
                 scoreTable.setLeftPlayerScore(scoreTable.getLeftPlayerScore()+1);
+                gameEnded = true;
                 reset();
             }
         }
@@ -180,13 +173,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 }
 
                 scoreTable.setLeftPlayerScore(scoreTable.getLeftPlayerScore()+1);
-                //ball.setDirection(Ball.directions.DOWN_LEFT);
+
             }
+
         }
 
-
-
-        if (gameStarted){
+        if (gameStarted && !gameEnded){
             ball.update();
         }
 
@@ -210,6 +202,17 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 wall.draw(canvas);
 
             scoreTable.draw(canvas);
+            if(gameEnded && gameMode == 2) {
+                int highScore = 2;//TODO nacist / ulozit highScore v pameti
+                if(scoreTable.getLeftPlayerScore() > highScore)
+                    geText.setText("High score: " + scoreTable.getLeftPlayerScore());
+                else
+                    geText.setText("Your score: " + scoreTable.getLeftPlayerScore());
+
+                canvas.drawColor(Color.BLACK);
+                geText.draw(canvas);
+
+            }
         }
     }
 
@@ -231,6 +234,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             case MotionEvent.ACTION_DOWN: {
                 if (!gameStarted)
                     gameStarted = true;
+
+                if(gameEnded && gameMode == 2){
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(intent);
+                } else if(gameEnded && gameMode != 2){
+                    reset();
+                    gameEnded = false;
+                }
+
 
                 return true;
             }
@@ -276,7 +289,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
     public void pause(){
         Log.d("pr","pause");
-
     }
 
 
@@ -286,7 +298,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         paddleL.reset();
         if(paddleR != null)
             paddleR.reset();
-
     }
 
 
