@@ -1,7 +1,9 @@
 package com.example.pong;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.graphics.Typeface;
 import android.widget.Button;
@@ -32,6 +34,10 @@ public class MainActivity extends Activity {
         btnOneP.setTypeface(tf);
         btnTwoP.setTypeface(tf);
         btnWall.setTypeface(tf);
+
+        SharedPreferences prefs = getSharedPreferences("highScore", Context.MODE_PRIVATE);
+        int highScore = prefs.getInt("highScore", 0);
+        tvHighscore.setText("High score: " + highScore);
 
     }
 

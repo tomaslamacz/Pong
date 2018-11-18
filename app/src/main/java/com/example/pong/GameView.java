@@ -1,6 +1,7 @@
 package com.example.pong;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.util.Log;
@@ -29,6 +30,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private ScoreTable scoreTable;
     private GameEndText geText;
     private Line line;
+    private boolean scoreSaved = false;
 
     private SparseArray<PointF> activePointers = new SparseArray<PointF>();
 
@@ -230,12 +232,26 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 wall.draw(canvas);
 
             scoreTable.draw(canvas);
+
             if(gameEnded && gameMode == 2) {
-                int highScore = 2;//TODO nacist / ulozit highScore v pameti
-                if(scoreTable.getLeftPlayerScore() > highScore)
-                    geText.setText("High score: " + scoreTable.getLeftPlayerScore());
-                else
-                    geText.setText("Your score: " + scoreTable.getLeftPlayerScore());
+                if (!scoreSaved){//je tu proto, aby se pres high score text neprekreslil text your score
+                    SharedPreferences prefs = context.getSharedPreferences("highScore", Context.MODE_PRIVATE);
+                    int highScore = prefs.getInt("highScore", 0); //0 is the default value
+
+                    if(scoreTable.getLeftPlayerScore() > highScore){
+                        geText.setText("High score: " + scoreTable.getLeftPlayerScore());
+
+
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putInt("highScore", scoreTable.getLeftPlayerScore());
+                        editor.commit();
+                    }
+                    else
+                        geText.setText("Your score: " + scoreTable.getLeftPlayerScore());
+
+                    scoreSaved = true;
+
+                }
 
                 canvas.drawColor(Color.BLACK);
                 geText.draw(canvas);
