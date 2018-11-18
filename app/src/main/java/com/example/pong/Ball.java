@@ -166,7 +166,7 @@ public class Ball {
     }
 
     public void adjustSpeed(){
-        if (speedX < 190){
+        if (speedX < 180){
             speedX *= 1.05;
             speedY *= 1.03;
             diagSpeedY *= 1.03;

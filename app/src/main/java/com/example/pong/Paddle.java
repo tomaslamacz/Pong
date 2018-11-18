@@ -68,11 +68,11 @@ public class Paddle {
 
 
         if(desiredPosY != -999){
-            int tolerance = (int) (Math.random() * 10);
-            if (desiredPosY < posY + height + tolerance){
+            //int tolerance = (int) (Math.random() * 30 - 15);
+            if (desiredPosY < posY + height/2){
                 moveUp();
             }
-            if (desiredPosY > posY - tolerance){
+            if (desiredPosY > posY + height/2){
                 moveDown();
             }
         }
@@ -96,7 +96,8 @@ public class Paddle {
             posY -= speed;
     }
     public void moveDown() {
-        posY += speed;
+        if (posY + height < screenSize.y)
+            posY += speed;
     }
 
     public void move(int fingerPosY){
