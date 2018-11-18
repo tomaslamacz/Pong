@@ -116,6 +116,7 @@ public class Paddle {
 
     public void reset() {
         posY = screenSize.y / 2 - height / 2;
+        desiredPosY = -999;
     }
 
     public void setPosY(int posY) {
