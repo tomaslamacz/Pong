@@ -144,7 +144,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         Log.i("dy",distanceX+"");
                     } while (distanceX > 100);
 
-                    int tolerance = (int) (Math.random() * 200 - 100);
+                    int tolerance = (int) (Math.random() * 100 - 50);
                     Log.i("tlr",tolerance+"");
                     paddleR.setDesiredPosY(clone.getPosY()+clone.getHeight()/2+tolerance);
 
