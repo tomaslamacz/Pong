@@ -38,6 +38,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private MediaPlayer missMPlayer;
     private MediaPlayer wallMPlayer;
 
+    private int difficulty;
+
 
     private SparseArray<PointF> activePointers = new SparseArray<PointF>();
 
@@ -59,6 +61,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         paddleMPlayer = MediaPlayer.create(context, R.raw.paddle);
         missMPlayer = MediaPlayer.create(context, R.raw.miss);
         wallMPlayer = MediaPlayer.create(context, R.raw.wall);
+
+        difficulty = prefs.getInt("difficulty", 0);
     }
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
@@ -139,7 +143,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                         Log.i("dy",distanceX+"");
                     } while (distanceX > 100);
 
-                    int tolerance = (int) (Math.random() * 200 - 100);
+                    int tolerance = 0;
+
+                    if (difficulty == 0)
+                        tolerance = (int) (Math.random() * 400 - 200);
+                    else if (difficulty == 1)
+                        tolerance = (int) (Math.random() * 20 - 10);
+
                     Log.i("tlr",tolerance+"");
                     paddleR.setDesiredPosY(clone.getPosY()+clone.getHeight()/2+tolerance);
 

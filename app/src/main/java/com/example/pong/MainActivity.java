@@ -17,9 +17,12 @@ public class MainActivity extends Activity {
     private Button btnTwoP;
     private Button btnWall;
     private TextView tvSound;
+    private TextView tvDifficulty;
 
     private int sound;
     private SharedPreferences prefs;
+
+    private int difficulty;//0=easy,1=hard
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +37,7 @@ public class MainActivity extends Activity {
         btnTwoP = (Button) findViewById(R.id.btn_two_players);
         btnWall = (Button) findViewById(R.id.btn_wall_mode);
         tvSound = (TextView) findViewById(R.id.tv_sound);
+        tvDifficulty = (TextView) findViewById(R.id.tv_difficulty);
 
         tvHighscore.setTypeface(tf);
         tvPong.setTypeface(tf);
@@ -41,6 +45,7 @@ public class MainActivity extends Activity {
         btnTwoP.setTypeface(tf);
         btnWall.setTypeface(tf);
         tvSound.setTypeface(tf);
+        tvDifficulty.setTypeface(tf);
 
 
         //SharedPreferences prefs = getSharedPreferences("highScore", Context.MODE_PRIVATE);
@@ -50,11 +55,17 @@ public class MainActivity extends Activity {
 
 
         sound = prefs.getInt("sound", 1);
-
         if (sound == 1){
             tvSound.setText("Sound: ON");
         } else {
             tvSound.setText("Sound: OFF");
+        }
+
+        difficulty = prefs.getInt("difficulty", 0);
+        if (difficulty == 0){
+            tvDifficulty.setText("EASY");
+        } else {
+            tvDifficulty.setText("HARD");
         }
 
     }
@@ -87,5 +98,20 @@ public class MainActivity extends Activity {
         }
         editor.putInt("sound", sound);
         editor.commit();
+    }
+
+    public void onDifficultyClick(View view) {
+        SharedPreferences.Editor editor = prefs.edit();
+
+        if (difficulty == 0){
+            difficulty = 1;
+            tvDifficulty.setText("HARD");
+        } else {
+            difficulty = 0;
+            tvDifficulty.setText("EASY");
+        }
+        editor.putInt("difficulty", difficulty);
+        editor.commit();
+
     }
 }
