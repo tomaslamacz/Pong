@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
@@ -31,6 +32,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private GameEndText geText;
     private Line line;
     private boolean scoreSaved = false;
+    private SharedPreferences prefs;
+    private int sound;
+    private MediaPlayer paddleMPlayer;
+    private MediaPlayer missMPlayer;
+    private MediaPlayer wallMPlayer;
+
 
     private SparseArray<PointF> activePointers = new SparseArray<PointF>();
 
@@ -45,6 +52,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
+
+        prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        sound = prefs.getInt("sound", 1);
+
+        paddleMPlayer = MediaPlayer.create(context, R.raw.paddle);
+        missMPlayer = MediaPlayer.create(context, R.raw.miss);
+        wallMPlayer = MediaPlayer.create(context, R.raw.wall);
     }
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
@@ -86,37 +100,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update() {
-        //presunuto do tridy ball:
-        /*if(ball.getPosY() < 1){//horni hrana
-            if(ball.getDirection() == Ball.directions.UP_RIGHT){
-                ball.setDirection(Ball.directions.DOWN_RIGHT);
-            } else if(ball.getDirection() == Ball.directions.UP_LEFT){
-                ball.setDirection(Ball.directions.DOWN_LEFT);
-            } else if(ball.getDirection() == Ball.directions.UP_RIGHT_DIAG){
-                ball.setDirection(Ball.directions.DOWN_RIGHT_DIAG);
-            } else if(ball.getDirection() == Ball.directions.UP_LEFT_DIAG){
-                ball.setDirection(Ball.directions.DOWN_LEFT_DIAG);
-            }
-
-            ball.adjustSpeed();
-        } else if (ball.getPosY() + ball.getHeight() > screenSize.y - 1){//dolni hrana
-            if(ball.getDirection() == Ball.directions.DOWN_RIGHT){
-                ball.setDirection(Ball.directions.UP_RIGHT);
-            } else if(ball.getDirection() == Ball.directions.DOWN_LEFT){
-                ball.setDirection(Ball.directions.UP_LEFT);
-            } else if(ball.getDirection() == Ball.directions.DOWN_RIGHT_DIAG){
-                ball.setDirection(Ball.directions.UP_RIGHT_DIAG);
-            } else if(ball.getDirection() == Ball.directions.DOWN_LEFT_DIAG){
-                ball.setDirection(Ball.directions.UP_LEFT_DIAG);
-            }
-
-            ball.adjustSpeed();
-        }*/
-
         //odraz od levého pádla:
         if(ball.getPosX() >= screenSize.x * 1/10 - paddleL.getWidth() && ball.getPosX() <= screenSize.x * 1/10){
 
             if(ball.getPosY() + ball.getHeight() > paddleL.getPosY() && ball.getPosY() < paddleL.getPosY() + paddleL.getHeight()){//trefil
+                if(sound==1){
+
+                    paddleMPlayer.start();
+                }
+
+
                 //vypocteme, na kterou ctvrtinu padla dopadl stred micku
                 int ctvrtinaPadla = paddleL.getHeight() / 4;//velikost ctvrtiny padla
                 int ctvrtinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleL.getPosY()) / ctvrtinaPadla;
@@ -155,6 +148,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 }
 
             } else{//netrefil
+
+                if(sound==1) {
+                    missMPlayer.start();
+                }
+
                 scoreTable.setRightPlayerScore(scoreTable.getRightPlayerScore()+1);
                 gameEnded = true;
                 reset();
@@ -165,6 +163,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if(paddleR != null && ball.getPosX() + ball.getWidth() >= screenSize.x * 9/10 && ball.getPosX() + ball.getWidth() <= screenSize.x * 9/10 + paddleR.getWidth()){
 
             if(ball.getPosY() + ball.getHeight() > paddleR.getPosY() && ball.getPosY() < paddleR.getPosY() + paddleR.getHeight()){//trefil
+
+                if(sound==1) {
+                    paddleMPlayer.start();
+                }
+
                 //vypocteme, na kterou ctvrtinu padla dopadl stred micku
                 int ctvrtinaPadla = paddleR.getHeight() / 4;//velikost cvtvrtiny padla
                 int ctvrtinaDopadu = ((ball.getPosY() + ball.getHeight()/2) - paddleR.getPosY()) / ctvrtinaPadla;
@@ -180,6 +183,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 }
 
             } else{//netrefil
+
+                if(sound==1) {
+                    missMPlayer.start();
+                }
+
                 scoreTable.setLeftPlayerScore(scoreTable.getLeftPlayerScore()+1);
                 gameEnded = true;
                 reset();
@@ -189,6 +197,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         //odraz od zdi:
         if(wall != null){
             if(ball.getPosX() + ball.getWidth() >= screenSize.x * 9/10){
+
+                if(sound==1) {
+                    wallMPlayer.start();
+                }
+
                 if(ball.getDirection() == Ball.directions.UP_RIGHT_DIAG){
                     ball.setDirection(Ball.directions.UP_LEFT_DIAG);
                 } else if(ball.getDirection() == Ball.directions.UP_RIGHT){
@@ -235,7 +248,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             if(gameEnded && gameMode == 2) {
                 if (!scoreSaved){//je tu proto, aby se pres high score text neprekreslil text your score
-                    SharedPreferences prefs = context.getSharedPreferences("highScore", Context.MODE_PRIVATE);
+                    //SharedPreferences prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
                     int highScore = prefs.getInt("highScore", 0); //0 is the default value
 
                     if(scoreTable.getLeftPlayerScore() > highScore){

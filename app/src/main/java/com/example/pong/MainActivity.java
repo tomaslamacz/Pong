@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.graphics.Typeface;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -15,6 +16,10 @@ public class MainActivity extends Activity {
     private Button btnOneP;
     private Button btnTwoP;
     private Button btnWall;
+    private TextView tvSound;
+
+    private int sound;
+    private SharedPreferences prefs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,16 +33,29 @@ public class MainActivity extends Activity {
         btnOneP = (Button) findViewById(R.id.btn_one_player);
         btnTwoP = (Button) findViewById(R.id.btn_two_players);
         btnWall = (Button) findViewById(R.id.btn_wall_mode);
+        tvSound = (TextView) findViewById(R.id.tv_sound);
 
         tvHighscore.setTypeface(tf);
         tvPong.setTypeface(tf);
         btnOneP.setTypeface(tf);
         btnTwoP.setTypeface(tf);
         btnWall.setTypeface(tf);
+        tvSound.setTypeface(tf);
 
-        SharedPreferences prefs = getSharedPreferences("highScore", Context.MODE_PRIVATE);
+
+        //SharedPreferences prefs = getSharedPreferences("highScore", Context.MODE_PRIVATE);
+        prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE);
         int highScore = prefs.getInt("highScore", 0);
         tvHighscore.setText("High score: " + highScore);
+
+
+        sound = prefs.getInt("sound", 1);
+
+        if (sound == 1){
+            tvSound.setText("Sound: ON");
+        } else {
+            tvSound.setText("Sound: OFF");
+        }
 
     }
 
@@ -57,4 +75,17 @@ public class MainActivity extends Activity {
     }
 
 
+    public void onSoundClick(View view) {
+        SharedPreferences.Editor editor = prefs.edit();
+
+        if (sound == 1){
+            sound = 0;
+            tvSound.setText("Sound: OFF");
+        } else {
+            sound = 1;
+            tvSound.setText("Sound: ON");
+        }
+        editor.putInt("sound", sound);
+        editor.commit();
+    }
 }
